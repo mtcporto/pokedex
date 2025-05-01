@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokémon Details</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pokedex-red: #ff0000;
+            --pokedex-dark-red: #cc0000;
+            --pokedex-blue: #3b4cca;
+            --pokedex-yellow: #ffde00;
+            --pokedex-gold: #b3a125;
+            --hp-color: #FF5959;
+            --attack-color: #F5AC78;
+            --defense-color: #FAE078;
+            --sp-attack-color: #9DB7F5;
+            --sp-defense-color: #A7DB8D;
+            --speed-color: #FA92B2;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f0f0;
+            background-image: linear-gradient(45deg, #f0f0f0 25%, #e0e0e0 25%, #e0e0e0 50%, #f0f0f0 50%, #f0f0f0 75%, #e0e0e0 75%, #e0e0e0 100%);
+            background-size: 40px 40px;
+            padding: 40px 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .back-btn {
+            padding: 10px 20px;
+            background-color: var(--pokedex-red);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .back-btn:hover {
+            background-color: var(--pokedex-dark-red);
+            transform: translateY(-3px);
+        }
+        
+        .pokemon-id {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.5rem;
+            color: #666;
+        }
+        
+        .detail-card {
+            background-color: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .detail-header {
+            position: relative;
+            padding: 30px;
+            background: linear-gradient(135deg, var(--pokedex-red) 0%, var(--pokedex-dark-red) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .navigation-arrows {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            left: 0;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+            pointer-events: none;
+        }
+        
+        .nav-arrow {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            text-decoration: none;
+            transition: all 0.3s;
+            pointer-events: auto;
+        }
+        
+        .nav-arrow:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+            transform: scale(1.1);
+        }
+        
+        .pokemon-info {
+            flex: 1;
+        }
+        
+        .pokemon-name {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 2rem;
+            color: white;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+        }
+        
+        .pokemon-types {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .type-badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: white;
+            text-transform: capitalize;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .pokemon-image {
+            width: 300px;
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .pokemon-image img {
+            max-width: 100%;
+            max-height: 100%;
+            filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.4));
+        }
+        
+        .detail-section {
+            padding: 30px;
+        }
+        
+        .section-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: var(--pokedex-red);
+        }
+        
+        .pokemon-description {
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+        
+        .profile-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .profile-item {
+            background-color: #f7f7f7;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .profile-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .profile-value {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+        
+        .stats-container {
+            margin-bottom: 30px;
+        }
+        
+        .stat-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .stat-name {
+            width: 120px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+        
+        .stat-value {
+            width: 50px;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .stat-bar-container {
+            flex: 1;
+            height: 20px;
+            background-color: #eee;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .stat-bar {
+            height: 100%;
+            border-radius: 10px;
+        }
+        
+        .type-normal { background-color: #A8A77A; }
+        .type-fire { background-color: #EE8130; }
+        .type-water { background-color: #6390F0; }
+        .type-electric { background-color: #F7D02C; }
+        .type-grass { background-color: #7AC74C; }
+        .type-ice { background-color: #96D9D6; }
+        .type-fighting { background-color: #C22E28; }
+        .type-poison { background-color: #A33EA1; }
+        .type-ground { background-color: #E2BF65; }
+        .type-flying { background-color: #A98FF3; }
+        .type-psychic { background-color: #F95587; }
+        .type-bug { background-color: #A6B91A; }
+        .type-rock { background-color: #B6A136; }
+        .type-ghost { background-color: #735797; }
+        .type-dragon { background-color: #6F35FC; }
+        .type-dark { background-color: #705746; }
+        .type-steel { background-color: #B7B7CE; }
+        .type-fairy { background-color: #D685AD; }
+        
+        .weaknesses-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .weakness-badge {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            border-radius: 10px;
+            color: white;
+            font-size: 0.9rem;
+            min-width: 80px;
+        }
+        
+        .weakness-multiplier {
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .evolutions-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .evolution-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .evolution-item:hover {
+            transform: scale(1.05);
+        }
+        
+        .evolution-image {
+            width: 120px;
+            height: 120px;
+            background-color: #f0f0f0;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .evolution-image img {
+            max-width: 80%;
+            max-height: 80%;
+        }
+        
+        .evolution-arrow {
+            font-size: 2rem;
+            color: #ccc;
+            margin: 0 10px;
+        }
+        
+        .evolution-name {
+            font-weight: bold;
+        }
+        
+        .evolution-level {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        .abilities-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .ability-item {
+            background-color: #f0f0f0;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+        
+        .ability-item:hover {
+            background-color: #e0e0e0;
+            border-color: var(--pokedex-blue);
+        }
+        
+        .ability-name {
+            font-weight: bold;
+        }
+        
+        .ability-hidden {
+            font-size: 0.8rem;
+            color: #666;
+            font-style: italic;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 80%;
+            position: relative;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .modal-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: var(--pokedex-blue);
+        }
+        
+        .modal-text {
+            line-height: 1.6;
+        }
+        
+        .loader {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 300px;
+        }
+        
+        .pokeball {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(to bottom, var(--pokedex-red) 0%, var(--pokedex-red) 50%, white 50%, white 100%);
+            border-radius: 50%;
+            position: relative;
+            animation: rotate 2s linear infinite;
+            border: 3px solid #333;
+        }
+        
+        .pokeball:before {
+            content: '';
+            position: absolute;
+            top: calc(50% - 5px);
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background-color: #333;
+        }
+        
+        .pokeball:after {
+            content: '';
+            position: absolute;
+            top: calc(50% - 12px);
+            left: calc(50% - 12px);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: white;
+            border: 3px solid #333;
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            .detail-header {
+                flex-direction: column;
+            }
+            
+            .pokemon-image {
+                width: 100%;
+                height: 200px;
+                margin-top: 20px;
+            }
+            
+            .pokemon-name {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="pokemon.html" class="back-btn">← Voltar à Pokédex</a>
+            <div class="pokemon-id" id="pokemon-id">#000</div>
+        </header>
+        
+        <div class="detail-card">
+            <div class="detail-header" id="detail-header">
+                <div class="navigation-arrows">
+                    <a href="#" class="nav-arrow" id="prev-pokemon">←</a>
+                    <a href="#" class="nav-arrow" id="next-pokemon">→</a>
+                </div>
+                
+                <div class="pokemon-info">
+                    <h1 class="pokemon-name" id="pokemon-name">Carregando...</h1>
+                    <div class="pokemon-types" id="pokemon-types"></div>
+                </div>
+                
+                <div class="pokemon-image" id="pokemon-image">
+                    <div class="loader">
+                        <div class="pokeball"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <h2 class="section-title">Sobre</h2>
+                <p class="pokemon-description" id="pokemon-description">Carregando dados do Pokémon...</p>
+                
+                <div class="profile-grid" id="profile-grid">
+                    <!-- Informações do perfil serão adicionadas aqui -->
+                </div>
+                
+                <h2 class="section-title">Estatísticas Base</h2>
+                <div class="stats-container" id="stats-container">
+                    <!-- Estatísticas serão adicionadas aqui -->
+                </div>
+                
+                <h2 class="section-title">Efetividade de Tipo</h2>
+                <div class="weaknesses-container" id="weaknesses-container">
+                    <!-- Fraquezas serão adicionadas aqui -->
+                </div>
+                
+                <h2 class="section-title">Habilidades</h2>
+                <div class="abilities-container" id="abilities-container">
+                    <!-- Habilidades serão adicionadas aqui -->
+                </div>
+                
+                <h2 class="section-title">Cadeia de Evolução</h2>
+                <div class="evolutions-container" id="evolutions-container">
+                    <!-- Cadeia de evolução será adicionada aqui -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal para detalhes de habilidade -->
+    <div class="modal" id="ability-modal">
+        <div class="modal-content">
+            <span class="close-modal" id="close-modal">&times;</span>
+            <h3 class="modal-title" id="modal-title">Nome da Habilidade</h3>
+            <p class="modal-text" id="modal-text">Carregando informações da habilidade...</p>
+        </div>
+    </div>
+    
+    <script>
+        // Get DOM elements
+        const pokemonId = document.getElementById('pokemon-id');
+        const pokemonName = document.getElementById('pokemon-name');
+        const pokemonTypes = document.getElementById('pokemon-types');
+        const pokemonImage = document.getElementById('pokemon-image');
+        const pokemonDescription = document.getElementById('pokemon-description');
+        const profileGrid = document.getElementById('profile-grid');
+        const statsContainer = document.getElementById('stats-container');
+        const weaknessesContainer = document.getElementById('weaknesses-container');
+        const abilitiesContainer = document.getElementById('abilities-container');
+        const evolutionsContainer = document.getElementById('evolutions-container');
+        const prevPokemonBtn = document.getElementById('prev-pokemon');
+        const nextPokemonBtn = document.getElementById('next-pokemon');
+        const detailHeader = document.getElementById('detail-header');
+        
+        // Modal elements
+        const abilityModal = document.getElementById('ability-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalText = document.getElementById('modal-text');
+        const closeModal = document.getElementById('close-modal');
+        
+        // Get Pokémon ID from URL query parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentPokemonId = parseInt(urlParams.get('id')) || 1;
+        
+        // Type effectiveness chart
+        const typeEffectivenessChart = {
+            normal: { fighting: 2, ghost: 0 },
+            fire: { fire: 0.5, water: 2, grass: 0.5, ice: 0.5, bug: 0.5, rock: 2, dragon: 0.5, steel: 0.5 },
+            water: { fire: 0.5, water: 0.5, grass: 2, ground: 0.5, rock: 0.5, dragon: 0.5 },
+            electric: { water: 0.5, electric: 0.5, grass: 1, ground: 2, flying: 0.5, dragon: 0.5 },
+            grass: { fire: 2, water: 0.5, grass: 0.5, poison: 2, ground: 0.5, flying: 2, bug: 2, rock: 0.5, dragon: 0.5, steel: 1 },
+            ice: { fire: 2, water: 0.5, grass: 0.5, ice: 0.5, ground: 2, flying: 2, dragon: 2, steel: 2 },
+            fighting: { normal: 0.5, ice: 0.5, poison: 1, flying: 2, psychic: 2, bug: 0.5, rock: 0.5, ghost: 1, dark: 0.5, steel: 0.5, fairy: 2 },
+            poison: { grass: 0.5, poison: 0.5, ground: 2, rock: 1, ghost: 1, steel: 1, fairy: 0.5 },
+            ground: { fire: 0.5, electric: 0, grass: 2, poison: 0.5, flying: 1, bug: 1, rock: 0.5, steel: 0.5 },
+            flying: { electric: 2, grass: 0.5, fighting: 0.5, bug: 0.5, rock: 2, steel: 1 },
+            psychic: { fighting: 0.5, poison: 0.5, psychic: 0.5, dark: 2, steel: 1 },
+            bug: { fire: 2, grass: 0.5, fighting: 0.5, poison: 1, flying: 2, psychic: 0.5, ghost: 1, dark: 0.5, steel: 1, fairy: 1 },
+            rock: { fire: 0.5, ice: 0.5, fighting: 2, ground: 2, flying: 0.5, bug: 0.5, steel: 2 },
+            ghost: { normal: 0, fighting: 0, poison: 0.5, bug: 0.5, ghost: 2, dark: 2, steel: 1 },
+            dragon: { dragon: 2, steel: 1, fairy: 2 },
+            dark: { fighting: 2, psychic: 0, ghost: 0.5, dark: 0.5, fairy: 2 },
+            steel: { fire: 2, water: 1, electric: 1, ice: 0.5, rock: 0.5, steel: 0.5, fairy: 0.5 },
+            fairy: { fighting: 0.5, poison: 2, bug: 0.5, dragon: 0, dark: 0.5, steel: 2 }
+        };
+        
+        // Load Pokemon data
+        async function loadPokemonData(id) {
+            try {
+                // Fetch basic Pokemon data
+                const pokemonResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
+                const pokemon = await pokemonResponse.json();
+                
+                // Fetch species data for description and other details
+                const speciesResponse = await fetch(pokemon.species.url);
+                const species = await speciesResponse.json();
+                
+                // Update navigation buttons
+                updateNavigation(id);
+                
+                // Display the Pokemon data
+                displayPokemonData(pokemon, species);
+                
+                // Fetch and display evolution chain
+                const evolutionResponse = await fetch(species.evolution_chain.url);
+                const evolutionData = await evolutionResponse.json();
+                displayEvolutionChain(evolutionData.chain);
+                
+            } catch (error) {
+                console.error("Error loading Pokemon data:", error);
+                pokemonDescription.textContent = "Failed to load Pokémon data. Please try again later.";
+            }
+        }
+        
+        function updateNavigation(id) {
+            prevPokemonBtn.href = `pokemon-detail.html?id=${id > 1 ? id - 1 : 151}`;
+            nextPokemonBtn.href = `pokemon-detail.html?id=${id < 151 ? id + 1 : 1}`;
+        }
+        
+        // Traduções dos tipos de Pokémon
+        const typeTranslations = {
+            'normal': 'Normal',
+            'fire': 'Fogo',
+            'water': 'Água',
+            'electric': 'Elétrico',
+            'grass': 'Planta',
+            'ice': 'Gelo',
+            'fighting': 'Lutador',
+            'poison': 'Venenoso',
+            'ground': 'Terra',
+            'flying': 'Voador',
+            'psychic': 'Psíquico',
+            'bug': 'Inseto',
+            'rock': 'Pedra',
+            'ghost': 'Fantasma',
+            'dragon': 'Dragão',
+            'dark': 'Sombrio',
+            'steel': 'Metálico',
+            'fairy': 'Fada'
+        };
+        
+        // Traduções para categorias de habitat
+        const habitatTranslations = {
+            'cave': 'Caverna',
+            'forest': 'Floresta',
+            'grassland': 'Campo',
+            'mountain': 'Montanha',
+            'rare': 'Raro',
+            'rough-terrain': 'Terreno Acidentado',
+            'sea': 'Mar',
+            'urban': 'Urbano',
+            'waters-edge': 'Beira d\'Água',
+            'unknown': 'Desconhecido'
+        };
+        
+        // Traduções para estatísticas
+        const statTranslations = {
+            'hp': 'HP',
+            'attack': 'Ataque',
+            'defense': 'Defesa',
+            'special-attack': 'Atq. Esp.',
+            'special-defense': 'Def. Esp.',
+            'speed': 'Velocidade',
+            'total': 'Total'
+        };
+        
+        function displayPokemonData(pokemon, species) {
+            // Format ID with leading zeros
+            const formattedId = String(pokemon.id).padStart(3, '0');
+            pokemonId.textContent = `#${formattedId}`;
+            
+            // Set name
+            pokemonName.textContent = pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
+            
+            // Set page title
+            document.title = `${pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)} | Pokédex`;
+            
+            // Set types
+            pokemonTypes.innerHTML = '';
+            pokemon.types.forEach(typeInfo => {
+                const type = typeInfo.type.name;
+                const typeBadge = document.createElement('span');
+                typeBadge.classList.add('type-badge', `type-${type}`);
+                typeBadge.textContent = typeTranslations[type] || type;
+                pokemonTypes.appendChild(typeBadge);
+            });
+            
+            // Set header background based on primary type
+            const primaryType = pokemon.types[0].type.name;
+            detailHeader.style.background = `linear-gradient(135deg, var(--type-${primaryType}, var(--pokedex-red)) 0%, var(--type-${primaryType}-dark, var(--pokedex-dark-red)) 100%)`;
+            
+            // Set image
+            pokemonImage.innerHTML = '';
+            const img = document.createElement('img');
+            img.src = pokemon.sprites.other['official-artwork'].front_default || pokemon.sprites.front_default;
+            img.alt = pokemon.name;
+            pokemonImage.appendChild(img);
+            
+            // Set description (find Portuguese flavor text if available, otherwise use English)
+            const ptFlavorText = species.flavor_text_entries.find(entry => entry.language.name === "pt-br");
+            const enFlavorText = species.flavor_text_entries.find(entry => entry.language.name === "en");
+            
+            if (ptFlavorText) {
+                pokemonDescription.textContent = ptFlavorText.flavor_text.replace(/\f/g, ' ');
+            } else if (enFlavorText) {
+                pokemonDescription.textContent = enFlavorText.flavor_text.replace(/\f/g, ' ');
+            } else {
+                pokemonDescription.textContent = "Não há descrição disponível para este Pokémon.";
+            }
+            
+            // Set profile information
+            displayProfileInfo(pokemon, species);
+            
+            // Set stats
+            displayStats(pokemon.stats);
+            
+            // Set type effectiveness
+            displayTypeEffectiveness(pokemon.types);
+            
+            // Set abilities
+            displayAbilities(pokemon.abilities);
+        }
+        
+        function displayProfileInfo(pokemon, species) {
+            profileGrid.innerHTML = '';
+            
+            // Create profile items
+            const profileItems = [
+                { label: "Altura", value: `${(pokemon.height / 10).toFixed(1)} m` },
+                { label: "Peso", value: `${(pokemon.weight / 10).toFixed(1)} kg` },
+                { label: "Categoria", value: getCategory(species) },
+                { label: "Gênero", value: getGenderRatio(species) },
+                { label: "Habitat", value: species.habitat ? (habitatTranslations[species.habitat.name] || species.habitat.name) : "Desconhecido" },
+                { label: "Exp. Base", value: pokemon.base_experience || "Desconhecido" }
+            ];
+            
+            profileItems.forEach(item => {
+                const profileItem = document.createElement('div');
+                profileItem.classList.add('profile-item');
+                
+                profileItem.innerHTML = `
+                    <div class="profile-label">${item.label}</div>
+                    <div class="profile-value">${item.value}</div>
+                `;
+                
+                profileGrid.appendChild(profileItem);
+            });
+        }
+        
+        function getCategory(species) {
+            // Try to find Portuguese genus first
+            const ptGenusEntry = species.genera.find(genus => genus.language.name === "pt-br");
+            if (ptGenusEntry) return ptGenusEntry.genus;
+            
+            // Fall back to English
+            const enGenusEntry = species.genera.find(genus => genus.language.name === "en");
+            return enGenusEntry ? enGenusEntry.genus : "Desconhecido";
+        }
+        
+        function getGenderRatio(species) {
+            if (species.gender_rate === -1) {
+                return "Sem Gênero";
+            }
+            
+            const femalePercentage = (species.gender_rate / 8) * 100;
+            const malePercentage = 100 - femalePercentage;
+            return `${malePercentage}% Macho, ${femalePercentage}% Fêmea`;
+        }
+        
+        function displayStats(stats) {
+            statsContainer.innerHTML = '';
+            
+            // Define stat colors and max values
+            const statConfigs = {
+                hp: { color: 'var(--hp-color)', maxStat: 255 },
+                attack: { color: 'var(--attack-color)', maxStat: 190 },
+                defense: { color: 'var(--defense-color)', maxStat: 250 },
+                'special-attack': { color: 'var(--sp-attack-color)', maxStat: 194 },
+                'special-defense': { color: 'var(--sp-defense-color)', maxStat: 250 },
+                speed: { color: 'var(--speed-color)', maxStat: 200 }
+            };
+            
+            let totalStat = 0;
+            
+            // Create stat rows
+            stats.forEach(stat => {
+                totalStat += stat.base_stat;
+                const statName = stat.stat.name;
+                const statConfig = statConfigs[statName] || { color: '#ddd', maxStat: 200 };
+                const percentage = (stat.base_stat / statConfig.maxStat) * 100;
+                
+                const statRow = document.createElement('div');
+                statRow.classList.add('stat-row');
+                
+                // Translated stat name
+                const translatedName = statTranslations[statName] || statName;
+                
+                statRow.innerHTML = `
+                    <div class="stat-name">${translatedName}</div>
+                    <div class="stat-value">${stat.base_stat}</div>
+                    <div class="stat-bar-container">
+                        <div class="stat-bar" style="width: ${percentage}%; background-color: ${statConfig.color}"></div>
+                    </div>
+                `;
+                
+                statsContainer.appendChild(statRow);
+            });
+            
+            // Add total stat row
+            const totalRow = document.createElement('div');
+            totalRow.classList.add('stat-row');
+            totalRow.innerHTML = `
+                <div class="stat-name" style="font-weight: bold">${statTranslations['total']}</div>
+                <div class="stat-value" style="font-weight: bold">${totalStat}</div>
+                <div class="stat-bar-container">
+                    <div class="stat-bar" style="width: ${(totalStat / 600) * 100}%; background: linear-gradient(to right, #FF5959, #FFDE00)"></div>
+                </div>
+            `;
+            statsContainer.appendChild(totalRow);
+        }
+        
+        function displayTypeEffectiveness(types) {
+            weaknessesContainer.innerHTML = '';
+            
+            // Calculate effectiveness
+            const effectiveness = calculateTypeEffectiveness(types);
+            
+            // Sort effectiveness by multiplier (highest first)
+            const sortedEffectiveness = Object.entries(effectiveness)
+                .filter(([_, multiplier]) => multiplier !== 1) // Remove neutral types
+                .sort((a, b) => b[1] - a[1]); // Sort descending
+            
+            // Display each weakness/resistance
+            sortedEffectiveness.forEach(([type, multiplier]) => {
+                const badge = document.createElement('div');
+                badge.classList.add('weakness-badge', `type-${type}`);
+                
+                badge.innerHTML = `
+                    <div>${typeTranslations[type] || type}</div>
+                    <div class="weakness-multiplier">×${multiplier}</div>
+                `;
+                
+                weaknessesContainer.appendChild(badge);
+            });
+            
+            if (sortedEffectiveness.length === 0) {
+                weaknessesContainer.innerHTML = '<p>Sem fraquezas ou resistências notáveis.</p>';
+            }
+        }
+        
+        function calculateTypeEffectiveness(types) {
+            // Start with a neutral effectiveness for all types
+            const effectiveness = {};
+            Object.keys(typeEffectivenessChart).forEach(type => {
+                effectiveness[type] = 1;
+            });
+            
+            // Apply each of the Pokemon's types
+            types.forEach(typeInfo => {
+                const defenderType = typeInfo.type.name;
+                
+                // For each attacking type
+                Object.keys(typeEffectivenessChart).forEach(attackingType => {
+                    const attackData = typeEffectivenessChart[attackingType];
+                    
+                    // If this attacking type affects the defender type
+                    if (attackData && attackData[defenderType] !== undefined) {
+                        effectiveness[attackingType] *= attackData[defenderType];
+                    }
+                });
+            });
+            
+            return effectiveness;
+        }
+        
+        function displayAbilities(abilities) {
+            abilitiesContainer.innerHTML = '';
+            
+            abilities.forEach(ability => {
+                const abilityItem = document.createElement('div');
+                abilityItem.classList.add('ability-item');
+                abilityItem.setAttribute('data-ability', ability.ability.name);
+                
+                abilityItem.innerHTML = `
+                    <div class="ability-name">${formatAbilityName(ability.ability.name)}</div>
+                    ${ability.is_hidden ? '<div class="ability-hidden">(Habilidade Oculta)</div>' : ''}
+                `;
+                
+                abilityItem.addEventListener('click', () => showAbilityDetails(ability.ability));
+                
+                abilitiesContainer.appendChild(abilityItem);
+            });
+        }
+        
+        function formatAbilityName(name) {
+            // Convert kebab-case to Title Case
+            return name.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+        }
+        
+        async function showAbilityDetails(ability) {
+            modalTitle.textContent = formatAbilityName(ability.name);
+            modalText.textContent = "Carregando informações da habilidade...";
+            
+            // Show modal
+            abilityModal.style.display = "flex";
+            
+            try {
+                const response = await fetch(ability.url);
+                const abilityData = await response.json();
+                
+                // Try to find Portuguese effect text first
+                let effectEntry = abilityData.effect_entries.find(entry => entry.language.name === "pt-br");
+                
+                // Fall back to English if Portuguese is not available
+                if (!effectEntry) {
+                    effectEntry = abilityData.effect_entries.find(entry => entry.language.name === "en");
+                }
+                
+                if (effectEntry) {
+                    modalText.textContent = effectEntry.effect;
+                } else {
+                    modalText.textContent = "Não há descrição disponível para esta habilidade.";
+                }
+                
+            } catch (error) {
+                console.error("Erro ao buscar detalhes da habilidade:", error);
+                modalText.textContent = "Falha ao carregar detalhes da habilidade. Por favor, tente novamente mais tarde.";
+            }
+        }
+        
+        async function displayEvolutionChain(evolutionChain) {
+            evolutionsContainer.innerHTML = '';
+            
+            // Process the evolution chain recursively
+            await processEvolutionChain(evolutionChain);
+        }
+        
+        async function processEvolutionChain(chain, isFirst = true) {
+            // Get the current Pokemon's species URL
+            const speciesUrl = chain.species.url;
+            const speciesId = getIdFromUrl(speciesUrl);
+            
+            try {
+                // Get the Pokemon data from the species ID
+                const pokemonResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${speciesId}`);
+                const pokemon = await pokemonResponse.json();
+                
+                // Create evolution item
+                const evolutionItem = document.createElement('div');
+                evolutionItem.classList.add('evolution-item');
+                evolutionItem.setAttribute('data-id', pokemon.id);
+                
+                // Only show arrow if not the first Pokemon in the chain
+                if (!isFirst) {
+                    const arrow = document.createElement('div');
+                    arrow.classList.add('evolution-arrow');
+                    arrow.textContent = '→';
+                    evolutionsContainer.appendChild(arrow);
+                }
+                
+                // Create HTML for the evolution item
+                evolutionItem.innerHTML = `
+                    <div class="evolution-image">
+                        <img src="${pokemon.sprites.other['official-artwork'].front_default || pokemon.sprites.front_default}" alt="${pokemon.name}">
+                    </div>
+                    <div class="evolution-name">${pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}</div>
+                    <div class="evolution-level">#${String(pokemon.id).padStart(3, '0')}</div>
+                `;
+                
+                // Add click event to navigate to this Pokemon
+                evolutionItem.addEventListener('click', () => {
+                    window.location.href = `pokemon-detail.html?id=${pokemon.id}`;
+                });
+                
+                evolutionsContainer.appendChild(evolutionItem);
+                
+                // Process each evolution
+                if (chain.evolves_to && chain.evolves_to.length > 0) {
+                    for (const evolution of chain.evolves_to) {
+                        await processEvolutionChain(evolution, false);
+                    }
+                }
+            } catch (error) {
+                console.error(`Error processing evolution chain for Pokemon ${speciesId}:`, error);
+            }
+        }
+        
+        function getIdFromUrl(url) {
+            const matches = url.match(/\/(\d+)\//);
+            return matches ? matches[1] : null;
+        }
+        
+        // Close modal when clicking the X
+        closeModal.addEventListener('click', () => {
+            abilityModal.style.display = 'none';
+        });
+        
+        // Close modal when clicking outside of it
+        window.addEventListener('click', (event) => {
+            if (event.target === abilityModal) {
+                abilityModal.style.display = 'none';
+            }
+        });
+        
+        // Load initial data
+        loadPokemonData(currentPokemonId);
+    </script>
+</body>
+</html>
